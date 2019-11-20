@@ -8,7 +8,7 @@ set(SOURCES src/main.cpp)
 
 add_executable(App3 ${SOURCES})
 set_target_properties(App3 PROPERTIES CXX_STANDARD 17)
-target_link_libraries(App3 PRIVATE CONAN_PKG::libC CONAN_PKG::libD)
+target_link_libraries(App3 PRIVATE CONAN_PKG::libD)
 
 install(TARGETS App3
         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
