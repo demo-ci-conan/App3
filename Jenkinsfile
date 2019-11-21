@@ -12,10 +12,14 @@ docker_runs["conanio-gcc7"] = ["conanio/gcc7", "linux_gcc_7_x86_64"]
 docker_runs["conanio-gcc8_temp"] = ["conanio/gcc8", "conanio-gcc8"]	
 docker_runs["conanio-gcc7_temp"] = ["conanio/gcc7", "conanio-gcc7"]
 
+ArrayList line_split(String text) {
+  return text.split('\\r?\\n') as ArrayList
+}
+
 def organization = "demo-ci-conan"
 def user_channel = "demo/testing"
 def config_url = "https://github.com/demo-ci-conan/settings.git"
-def projects = []  // TODO: Get list dinamically
+def projects = line_split(readTrusted('dependent-projects.txt')).collect { "${it}@${user_channel}" } // TODO: Get list dynamically
 
 String reference_revision = null
 String repository = null
@@ -50,7 +54,7 @@ def get_stages(id, docker_image, artifactory_name, artifactory_repo, profile, us
                         echo("Get dependencies and create app")
                         String arguments = "--profile ${profile} --lockfile=${lockfile}"
                         client.run(command: "graph lock . ${arguments}".toString())
-                        client.run(command: "create . ${user_channel} ${arguments} --build ${repository} --ignore-dirty".toString())
+                        client.run(command: "create . ${user_channel} ${arguments} --build missing --ignore-dirty".toString())
                         sh "cat ${shell_quote(lockfile)}"
 
                         name = sh (script: "conan inspect . --raw name", returnStdout: true).trim()
